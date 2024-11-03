@@ -4,7 +4,7 @@
 
 # 文件说明
 
-编程环境：VSCode + WSL2 Ubuntu-22.04 + clang 14.0.0 + gcc 11.4.0
+编程环境：VSCode + WSL2 Ubuntu-22.04 + clang 14.0.0 + gcc 11.4.0 + python 
 
 1. 每个程序由3部分组成，源代码.c，可执行文件，输出结果.out，输入范例.in。
 2. 不能存在未定义行为。
