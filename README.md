@@ -25,4 +25,4 @@
     }
     ```
 然后的话就是通过文件导入stdin（终端上进行测试），写好.in和.out
-5. `test_<filename>_<function_name>.in`是对某个文件的某个函数的输入，第一行为test函数名。
+5. `test_<filename>_<function_name>.in`是对某个文件的某个函数的输入，第一行为test函数名。同理，`test_<filename>_<function_name>.out`是对某个文件的某个函数的输出。

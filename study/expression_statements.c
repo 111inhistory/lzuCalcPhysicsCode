@@ -48,7 +48,6 @@ int main() {
     long prime;
     scanf("%ld", &prime);
     printf("isprime(%ld) returns %d", prime, isprime(prime));
-    fac(100);
 }
 
 long funca(long a, long b) {

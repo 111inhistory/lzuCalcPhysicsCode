@@ -5,11 +5,7 @@
     "args": [ // 编译命令参数
         "${file}", //要编译的文件名，你也可以改成 *.cpp 表示编译当前目录所有的cpp文件
         "-o", //指定生成的程序名字
-<<<<<<< HEAD
-        "${fileDirname}/${fileBasenameNoExtension}.o", //这是你要生成的程序名字
-=======
         "${fileDirname}/${fileBasenameNoExtension}", //这是你要生成的程序名字
->>>>>>> c6b044a (init)
         "-g", // 生成和调试有关的信息
         "-fcolor-diagnostics", //彩色信息
         "-w", //屏蔽警告
