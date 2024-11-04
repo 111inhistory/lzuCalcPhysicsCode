@@ -7,6 +7,9 @@
 
 void test_matrix_mul_vec();
 void test_matrix_mul_matrix();
+void matrix_mul_vec(double *matrix, double *vec, double *res_vec, int row, int col);
+void matrix_mul_matrix(double *matrix1, double *matrix2, double *res_matrix, int row1, int col1, int col2);
+void exchange_lines(double *matrix, int n, int row_num1, int row_num2);
 
 /*
 Free-after-use result array should always be defined in caller and pass the pointer to the func
@@ -27,7 +30,8 @@ Free-after-use result array should always be defined in caller and pass the poin
 
 row1 * col1 matrix * col1 * col2 matrix = row1 * col2 matrix.
 res_vec length is row1 * col2 * sizeof(double)
-so for each col in matrix2 
+
+algorithm complexity is O(n^3)
 */
 void matrix_mul_matrix(double *matrix1, double *matrix2, double *res_matrix, int row1, int col1, int col2) {
     int row2 = col1;
@@ -38,6 +42,15 @@ void matrix_mul_matrix(double *matrix1, double *matrix2, double *res_matrix, int
                 res_matrix[col2 * i + j] += matrix1[col1 * i + k] * matrix2[col2 * k + j];
             }
         } 
+    }
+}
+
+void exchange_lines(double *matrix, int n, int row_num1, int row_num2) {
+    double temp;
+    for (int i = 0; i < n; i++) {
+        temp = matrix[row_num1 * n + i];
+        matrix[row_num1 * n + i] = matrix[row_num2 * n + i];
+        matrix[row_num2 * n + i] = temp;
     }
 }
 
