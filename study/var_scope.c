@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+
+// define global and static variables.
 int c = 114514;
 const int d = 1919810;
 static int e = 114;
