@@ -7,7 +7,7 @@ def gen_test(path, function_name):
 
 int main() {
     char s[64];
-    scanf("%s", &s);
+    scanf("%s", s);
 """
         for i in range(len(function_name)):
             if i == 0:
