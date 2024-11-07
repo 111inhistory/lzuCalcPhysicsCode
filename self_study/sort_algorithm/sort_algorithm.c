@@ -25,6 +25,7 @@ static const int test_array[101] = {
     3,   81, 51, 71, 34, 49, 9,  25, 0,  92, 37, 23, 22, 59, 7,  45, 99,
     87,  78, 27, 19, 68, 42, 52, 40, 63, 95, 18, 72, 24, 84, 76, 4};
 
+/*Check if the length of array is ascending.*/
 int predicate_ascd(int *array, int length) {
     for (int i = 0; i < length - 1; ++i) {
         if (array[i] > array[i + 1])
@@ -59,7 +60,7 @@ make the array ascending.
 Algorithm complexity is O(n^2), but will take less time due to the dist of data.
 */
 void insertion_sort(int *array, int length) {
-    for (int i = 1; i < length - 1; i++) { // length 1 array is always ordered.
+    for (int i = 0; i < length - 1; i++) { // length 1 array is always ordered.
         for (int j = i + 1; j > 0 && array[j - 1] > array[j];
              j--) { // the second statement in for loop statement is a
                     // expression, you can add conditions whatever you want.
@@ -122,9 +123,9 @@ int binary_search(int *array, int length, int key) {
     while (left < right) {
         int mid = (left + right) / 2;
         if (array[mid] > key) {
-            left = mid;
-        } else if (array[mid] < key) {
             right = mid;
+        } else if (array[mid] < key) {
+            left = mid + 1;
         } else {
             return mid;
         }
@@ -134,7 +135,9 @@ int binary_search(int *array, int length, int key) {
 
 int test_binary_search() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
-    memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
+    for (int i = 0; i < test_array[0]; i++) {
+        array[i] = i + 1;
+    }
     for (int i = 0; i < test_array[0]; ++i) {
         if (binary_search(array, test_array[0], array[i]) != i) {
             return 0;
@@ -179,7 +182,7 @@ int test_merge() {
     for (int i = 0; i < 50; i++) {
         array1[i] = i;
     }
-    for (int i = 0; i <50; i++) {
+    for (int i = 0; i < 50; i++) {
         array2[i] = i + 50;
     }
     merge(array1, 50, array2, 50, res);
@@ -207,16 +210,16 @@ Algorithm complexity is O(logn*n), and it's very fixed in real life sorting.
 void merge_sort(int *array, int length) {
     int mid = length / 2;
     switch (length) {
-        case 1:
-            return;
-        case 2:
-            if (array[0] > array[1]) {
-                swap(&array[0], &array[1]);
-            }
-            return;
-        default:
-            merge_sort(array, mid);
-            merge_sort(array + mid, length - mid);
+    case 1:
+        return;
+    case 2:
+        if (array[0] > array[1]) {
+            swap(&array[0], &array[1]);
+        }
+        return;
+    default:
+        merge_sort(array, mid);
+        merge_sort(array + mid, length - mid);
     }
     int *res = (int *)malloc(length * sizeof(int));
     // DO NOT USE merge() TO WRITE BACK TO ARRAY! IT WILL LEAD TO LOGIC ERROR!
@@ -254,5 +257,4 @@ int main() {
     } else {
         printf("No test found\n");
     }
-    return 0;
 }
