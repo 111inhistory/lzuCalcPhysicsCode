@@ -30,7 +30,7 @@ int predicate_ascd(int *array, int length) {
         if (array[i] > array[i + 1])
             return 0;
     }
-    return  1;
+    return 1;
 }
 
 /*A function to swap to data. Maybe std func better.*/
@@ -59,7 +59,7 @@ make the array ascending.
 Algorithm complexity is O(n^2), but will take less time due to the dist of data.
 */
 void insertion_sort(int *array, int length) {
-    for (int i = 1; i < length; i++) { // length 1 array is always ordered.
+    for (int i = 1; i < length - 1; i++) { // length 1 array is always ordered.
         for (int j = i + 1; j > 0 && array[j - 1] > array[j];
              j--) { // the second statement in for loop statement is a
                     // expression, you can add conditions whatever you want.
@@ -68,7 +68,7 @@ void insertion_sort(int *array, int length) {
     }
 }
 
-int test_insertion_sort(){
+int test_insertion_sort() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
     memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
     insertion_sort(array, test_array[0]);
@@ -99,7 +99,7 @@ void selection_sort(int *array, int length) {
     }
 }
 
-int test_selection_sort(){
+int test_selection_sort() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
     memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
     selection_sort(array, test_array[0]);
@@ -153,24 +153,22 @@ Algorithm complexity is O(n).
 void merge(int *array1, int length1, int *array2, int length2, int *res) {
     int i = 0, j = 0;
     int cnt = 0;
-    while (i < length1 || j < length2) {
+    while (i < length1 && j < length2) {
         if (array1[i] < array2[j]) {
-            res[cnt++] = array1[i];
-            i++;
+            res[cnt++] = array1[i++];
         } else {
-            res[cnt++] = array2[j];
-            j++;
+            res[cnt++] = array2[j++];
         }
     }
     if (i < length1) {
-        for (; i < length1; i++) {
-            res[cnt++] = array1[i];
-        }
+        do {
+            res[cnt++] = array1[i++];
+        } while (i < length1);
     }
     if (j < length2) {
-        for (; j < length2; j++) {
-            res[cnt++] = array2[j];
-        }
+        do {
+            res[cnt++] = array2[j++];
+        } while (j < length2);
     }
 }
 
@@ -181,8 +179,8 @@ int test_merge() {
     for (int i = 0; i < 50; i++) {
         array1[i] = i;
     }
-    for (int i = 50; i < 100; i++) {
-        array2[i] = i;
+    for (int i = 0; i <50; i++) {
+        array2[i] = i + 50;
     }
     merge(array1, 50, array2, 50, res);
     if (!predicate_ascd(res, 100)) {
@@ -208,40 +206,50 @@ Algorithm complexity is O(logn*n), and it's very fixed in real life sorting.
 */
 void merge_sort(int *array, int length) {
     int mid = length / 2;
-    merge_sort(array, mid);
-    merge_sort(&array[mid], length - mid);
+    switch (length) {
+        case 1:
+            return;
+        case 2:
+            if (array[0] > array[1]) {
+                swap(&array[0], &array[1]);
+            }
+            return;
+        default:
+            merge_sort(array, mid);
+            merge_sort(array + mid, length - mid);
+    }
     int *res = (int *)malloc(length * sizeof(int));
     // DO NOT USE merge() TO WRITE BACK TO ARRAY! IT WILL LEAD TO LOGIC ERROR!
-    merge(array, mid, &array[mid], length - mid, res);
+    merge(array, mid, array + mid, length - mid, res);
     for (int i = 0; i < length; i++) {
         array[i] = res[i];
+        // printf( "%d ", array[i]);
     }
+    // printf( "\n");
     free(res);
 }
 
-int test_merge_sort(){
+int test_merge_sort() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
     memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
     merge_sort(array, test_array[0]);
     return predicate_ascd(array, test_array[0]);
 }
 
-
-
 int main() {
     char s[64];
     scanf("%s", s);
     if (strcmp(s, "test_insertion_sort") == 0) {
         assert(test_insertion_sort());
-    } else if (strcmp(s, "test_insertion_sort") == 0) {
+    } else if (strcmp(s, "test_selection_sort") == 0) {
         assert(test_selection_sort());
-    } else if (strcmp(s, "test_insertion_sort") == 0) {
+    } else if (strcmp(s, "test_swap") == 0) {
         assert(test_swap());
-    } else if (strcmp(s, "test_insertion_sort") == 0) {
+    } else if (strcmp(s, "test_binary_search") == 0) {
         assert(test_binary_search());
-    } else if (strcmp(s, "test_insertion_sort") == 0) {
+    } else if (strcmp(s, "test_merge") == 0) {
         assert(test_merge());
-    } else if (strcmp(s, "test_insertion_sort") == 0) {
+    } else if (strcmp(s, "test_merge_sort") == 0) {
         assert(test_merge_sort());
     } else {
         printf("No test found\n");
