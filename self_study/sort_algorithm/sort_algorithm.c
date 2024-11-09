@@ -61,11 +61,15 @@ Algorithm complexity is O(n^2), but will take less time due to the dist of data.
 */
 void insertion_sort(int *array, int length) {
     for (int i = 0; i < length - 1; i++) { // length 1 array is always ordered.
-        for (int j = i + 1; j > 0 && array[j - 1] > array[j];
-             j--) { // the second statement in for loop statement is a
-                    // expression, you can add conditions whatever you want.
-            swap(&array[j], &array[j - 1]);
+        int j = i + 1;
+        int key = array[j];
+        for (; j > 0 && array[j - 1] > key; j--) { // the second statement
+            // in for loop statement is a expression, you can add conditions
+            // whatever you want.
+            int a = array[j-1];
+            array[j] = array[j - 1];
         }
+        array[j] = key;
     }
 }
 
