@@ -253,11 +253,46 @@ bubble sorting.
 Average algorithm complexity is O(nlogn)
 */
 void quick_sort(int *array, int length) {
-    for (int i = 0; i < length; i++) {
-        printf("%d ", array[i]);
+    // end condition check
+    if (length <= 1) {
+        return;
     }
-    printf("\n");
-    printf("length: %d\n", length);
+    // does worth the condition check?
+    if (length == 2) {
+        if (array[0] > array[1]) {
+            swap(&array[0], &array[1]);
+        }
+    }
+    int base = array[0];
+    // init two pointers
+    int left = 0;
+    int right = length - 1;
+    while (left < right) {
+        // find two elem, one small in the right part, one big in the left part,
+        // then swap them. if left is the start of the right part, it still
+        // work. The same when right is the end of the left part.
+        while (array[right] >= base && left < right) {
+            right--;
+        }
+        while (array[left] <= base && left < right) {
+            left++;
+        }
+        swap(&array[left], &array[right]);
+    }
+    swap(&array[0], &array[right]);
+    // the base is at array[right] now
+    // sort the left part and right part except the base, cause it will make
+    // infinite recursion.
+    quick_sort(&array[right + 1], length - right - 1);
+    quick_sort(&array[0], right);
+}
+
+/*void quick_sort(int *array, int length) {
+    // for (int i = 0; i < length; i++) {
+    //     printf("%d ", array[i]);
+    // }
+    // printf("\n");
+    // printf("length: %d\n", length);
     if (length <= 1) {
         return;
     }
@@ -265,14 +300,14 @@ void quick_sort(int *array, int length) {
         if (array[0] > array[1]) {
             swap(&array[0], &array[1]);
         }
-        for (int i = 0; i < length; i++) {
-            printf("%d ", array[i]);
-        }
-        printf("\n");
-        return;
+        // for (int i = 0; i < length; i++) {
+        //     printf("%d ", array[i]);
+        // }
+        // printf("\n");
+        // return;
     }
     int base = array[0];
-    printf("base: %d\n", base);
+    // printf("base: %d\n", base);
     int left = 0;
     int right = length - 1;
     // right part is bigger than base
@@ -305,21 +340,21 @@ void quick_sort(int *array, int length) {
     // left is the last one of the left part
     // swap(&array[0], &array[left]);
     swap(&array[0], &array[right]);
-    printf("left array: ");
-    for (int i = 0; i < right - 1; i++) {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
-    printf("right array: ");
-    for (int i = right; i < length; i++) {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
-    // sort left part and right part excepct the base, else would lead to
+    // printf("left array: ");
+    // for (int i = 0; i < right - 1; i++) {
+    //     printf("%d ", array[i]);
+    // }
+    // printf("\n");
+    // printf("right array: ");
+    // for (int i = right; i < length; i++) {
+    //     printf("%d ", array[i]);
+    // }
+    // printf("\n");
+    // // sort left part and right part excepct the base, else would lead to
     // infinite recursion.
     quick_sort(&array[right + 1], length - right - 1);
     quick_sort(&array[0], right);
-}
+}*/
 
 int test_quick_sort() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
