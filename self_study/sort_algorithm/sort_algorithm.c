@@ -66,7 +66,7 @@ void insertion_sort(int *array, int length) {
         for (; j > 0 && array[j - 1] > key; j--) { // the second statement
             // in for loop statement is a expression, you can add conditions
             // whatever you want.
-            int a = array[j-1];
+            int a = array[j - 1];
             array[j] = array[j - 1];
         }
         array[j] = key;
@@ -243,6 +243,91 @@ int test_merge_sort() {
     return predicate_ascd(array, test_array[0]);
 }
 
+/*
+Quick Sort:
+
+It's like the reverse version of merge. Split, and recursive the parts, assume
+after each opration it will be well sorted. In fact, it's a improved version of
+bubble sorting.
+
+Average algorithm complexity is O(nlogn)
+*/
+void quick_sort(int *array, int length) {
+    for (int i = 0; i < length; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+    printf("length: %d\n", length);
+    if (length <= 1) {
+        return;
+    }
+    if (length == 2) {
+        if (array[0] > array[1]) {
+            swap(&array[0], &array[1]);
+        }
+        for (int i = 0; i < length; i++) {
+            printf("%d ", array[i]);
+        }
+        printf("\n");
+        return;
+    }
+    int base = array[0];
+    printf("base: %d\n", base);
+    int left = 0;
+    int right = length - 1;
+    // right part is bigger than base
+    while (left < right) {
+        while (array[right] >= base && left < right) {
+            right--;
+        }
+        // while (array[left] <= base && left < length - 1) {
+        // this will lead to result below
+        while (array[left] <= base && left < right) {
+            left++;
+        }
+        // printf( "left: %d, right: %d\n", left, right);
+        //
+        // when left is bigger than right, it will still execute once.
+        // then swap the first one and the elem left point at, the right part
+        // will be correct. but leads to an interesting result:
+        // array: 94 91 92 96 97 98 99 93 95
+        // length: 9
+        // base: 94
+        // left: 3, right: 7
+        // (94 91 92 93 97 98 99 96 95 )
+        // left: 4, right: 3
+        // (94 91 92 97 93 98 99 96 95 )
+        // left array: 93 91
+        // right array: 97 94 98 99 96 95
+        // the first elem is bigger than base.
+        swap(&array[left], &array[right]);
+    }
+    // left is the last one of the left part
+    // swap(&array[0], &array[left]);
+    swap(&array[0], &array[right]);
+    printf("left array: ");
+    for (int i = 0; i < right - 1; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+    printf("right array: ");
+    for (int i = right; i < length; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+    // sort left part and right part excepct the base, else would lead to
+    // infinite recursion.
+    quick_sort(&array[right + 1], length - right - 1);
+    quick_sort(&array[0], right);
+}
+
+int test_quick_sort() {
+    int *array = (int *)malloc(sizeof(int) * test_array[0]);
+    memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
+    quick_sort(array, test_array[0]);
+    return predicate_ascd(array, test_array[0]);
+}
+
 int main() {
     char s[64];
     scanf("%s", s);
@@ -258,6 +343,8 @@ int main() {
         assert(test_merge());
     } else if (strcmp(s, "test_merge_sort") == 0) {
         assert(test_merge_sort());
+    } else if (strcmp(s, "test_quick_sort") == 0) {
+        assert(test_quick_sort());
     } else {
         printf("No test found\n");
     }
