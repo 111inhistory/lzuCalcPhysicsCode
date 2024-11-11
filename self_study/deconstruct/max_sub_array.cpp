@@ -9,3 +9,7 @@ class Solution{
 template <typename T> std::vector<T> max_sub_array(std::vector<T>) {
     ;
 }};
+
+template <typename T> class Solution1 {
+    
+};

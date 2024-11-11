@@ -23,11 +23,11 @@ llu sum_cubic(llu k) {
 }
 
 ld sinx(ld x, ll max_times) {
-    x -= (llu)(x / M_PI + 1) * M_PI;
+    // x -= (llu)(x / M_PI + 1) * M_PI;
     ld sum = x;
     ld add = x;
     for (ll i = 1; i <= max_times; i++) {
-        // Similar to a status machine, use the last and output the present. 
+        // use the last and output the present. 
         // Perfect!
         add *= -1.0 * x * x;
         add /= (2.0*i) * (2.0*i + 1);
