@@ -7,15 +7,20 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
-<<<<<<< HEAD
-            "program": "${fileDirname}/${fileBasenameNoExtension}.o",
-=======
+            "name": "Debug - clang",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
->>>>>>> c6b044a (init)
             "args": [],
             "cwd": "${fileDirname}",
             "preLaunchTask": "clang++"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug - gcc",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "gcc"
         },
     ]
 }

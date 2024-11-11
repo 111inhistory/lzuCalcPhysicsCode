@@ -1,25 +1,43 @@
 // tasks.json
 {
     "version": "2.0.0",
-    "command": "clang", // 要使用的编译器
-    "args": [ // 编译命令参数
-        "${file}", //要编译的文件名，你也可以改成 *.cpp 表示编译当前目录所有的cpp文件
-        "-o", //指定生成的程序名字
-        "${fileDirname}/${fileBasenameNoExtension}", //这是你要生成的程序名字
-        "-g", // 生成和调试有关的信息
-        "-fcolor-diagnostics", //彩色信息
-        "-w", //屏蔽警告
-        //以下都是链接库参数，需要链接什么库就加在这
-        "-lm", //很神奇，不加它就用不了math.h啥的，但是语法检查能过
-    ],
     "tasks": [
         {
             "label": "clang++", // 任务名称，与launch.json的preLaunchTask相对应
             "type": "shell",
+            "command": "clang", // 要使用的编译器
+        "args": [ // 编译命令参数
+            "${file}", //要编译的文件名，你也可以改成 *.cpp 表示编译当前目录所有的cpp文件
+            "-o", //指定生成的程序名字
+            "${fileDirname}/${fileBasenameNoExtension}", //这是你要生成的程序名字
+            "-g", // 生成和调试有关的信息
+            "-fcolor-diagnostics", //彩色信息
+            "-w", //屏蔽警告
+            //以下都是链接库参数，需要链接什么库就加在这
+            "-lm", //很神奇，不加它就用不了math.h啥的，但是语法检查能过
+        ],
             "group": {
                 "kind": "build",
-                "isDefault": true // 设为false可做到一个tasks.json配置多个编译指令，需要自己修改本文件，我这里不多提
+                "isDefault": false // 设为false可做到一个tasks.json配置多个编译指令，需要自己修改本文件，我这里不多提
             },
-        }
+        }, 
+        {
+            "label": "gcc", // 任务名称，与launch.json的preLaunchTask相对应
+            "type": "shell",
+            "command": "gcc", // 要使用的编译器
+        "args": [ // 编译命令参数
+            "${file}", //要编译的文件名，你也可以改成 *.cpp 表示编译当前目录所有的cpp文件
+            "-o", //指定生成的程序名字
+            "${fileDirname}/${fileBasenameNoExtension}", //这是你要生成的程序名字
+            "-g", // 生成和调试有关的信息
+            "-w", //屏蔽警告
+            //以下都是链接库参数，需要链接什么库就加在这
+            "-lm", //很神奇，不加它就用不了math.h啥的，但是语法检查能过
+        ],
+            "group": {
+                "kind": "build",
+                "isDefault": false // 设为false可做到一个tasks.json配置多个编译指令，需要自己修改本文件，我这里不多提
+            },
+        }, 
     ],
 }
