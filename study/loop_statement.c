@@ -4,23 +4,23 @@
 #define ll long long
 #define ld long double
 
-// llu sum_cubic(llu k) {
-//     llu res = 0;
-//     for (llu i = 1; i <= k; i++) {
-//         res += i * i * i;
-//     }
-//     return res;
-// }
-
 llu sum_cubic(llu k) {
     llu res = 0;
-    llu i = 1;
-    while (i <= k) {
+    for (llu i = 1; i <= k; i++) {
         res += i * i * i;
-        i++;
     }
     return res;
 }
+
+// llu sum_cubic(llu k) {
+//     llu res = 0;
+//     llu i = 1;
+//     while (i <= k) {
+//         res += i * i * i;
+//         i++;
+//     }
+//     return res;
+// }
 
 ld sinx(ld x, ll max_times) {
     // x -= (llu)(x / M_PI + 1) * M_PI;
@@ -37,10 +37,10 @@ ld sinx(ld x, ll max_times) {
 }
 
 int main() {
-    // llu k;
-    // scanf("%llu", &k);
-    // printf("%llu\n", sum_cubic(k));
-    // printf("%llu\n", (llu)powl(2,64)-1);
+    llu k;
+    scanf("%llu", &k);
+    printf("%llu\n", sum_cubic(k));
+    printf("%llu\n", (llu)powl(2,64)-1);
     ld x;
     scanf("%Lf", &x);
     printf("%.40Lf\n", sinx(x,10));
