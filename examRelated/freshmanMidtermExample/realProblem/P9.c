@@ -16,12 +16,14 @@ typedef struct Matrix {
     int *matrix;
 } Matrix;
 
+/*Just swap two elem*/
 void swap(int *a, int *b) {
     int tmp = *a;
     *a = *b;
     *b = tmp;
 }
 
+/*init Matrix with specific params*/
 void init_matrix(Matrix *mat, int T, int row, int col, int *matrix) {
     mat->T = T;
     mat->row = row;
@@ -33,11 +35,13 @@ void init_matrix(Matrix *mat, int T, int row, int col, int *matrix) {
     }
 }
 
+/*well, right but has extra cost*/
 int get_index(Matrix *mat, int x, int y) {
     int col = mat->T ? mat->row : mat->col;
     return col * x + y;
 }
 
+/*generate `length` int array with random data*/
 int *fuzz(int length) {
     int *res = malloc(length * sizeof(int));
     for (int i  =  0;i < length; ++i) {
@@ -91,6 +95,7 @@ void matrix_mul_matrix(Matrix *matrix1, Matrix *matrix2, Matrix *res_matrix) {
     }
 }
 
+/*transpose the matrix, save it to res*/
 void trans_matrix(Matrix *mat, Matrix *res) {
     if (mat->T) {
         *res = *mat;
@@ -111,6 +116,7 @@ void trans_matrix(Matrix *mat, Matrix *res) {
 }
 
 int main(void) {
+    // define and init all the matrix used below
     Matrix a, b, aT, bT, res_ab, res_ab_T, res_bTaT;
     init_matrix(&a, 0, 12, 24, fuzz(12*24));
     init_matrix(&b, 0, 24, 7, fuzz(24*7));
@@ -119,14 +125,19 @@ int main(void) {
     init_matrix(&res_ab, 0, 24, 7, NULL);
     init_matrix(&res_ab_T, 0, 7, 24, NULL);
     init_matrix(&res_bTaT, 0, 7, 24, NULL);
-    
+
+    // get the transpose matrix of A and B for the calc of AT * BT
     trans_matrix(&a, &aT);
     trans_matrix(&b, &bT);
 
+    // calc A * B
     matrix_mul_matrix(&a, &b, &res_ab);
+    // get (AB)T
     trans_matrix(&res_ab, &res_ab_T);
+    // calc BT * AT
     matrix_mul_matrix(&bT, &aT, &res_bTaT);
 
+    // check every elem in res_ab_T is equal to res_bTaT, which means res_ab_T = res_bTaT
     for (int i = 0; i < 12 * 7; i++) {
         if (res_ab_T.matrix[i] != res_bTaT.matrix[i]) {
             printf("error at i, %d != %d", res_ab_T.matrix[i],
