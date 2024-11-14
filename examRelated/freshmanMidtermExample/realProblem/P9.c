@@ -1,51 +1,106 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef struct Matrix Matrix;
-void swap(int *a, int *b);
-void matrix_mul_matrix(Matrix *matrix1, Matrix *matrix2, Matrix *res_matrix);
-int get_index(Matrix *mat, int x, int y);
-void trans_matrix(Matrix *mat, Matrix *res);
-void init_matrix(Matrix *mat, int T, int row, int col, int *matrix);
-int *fuzz(int length);
+// void swap(int *a, int *b);
+// int get_index(Matrix *mat, int x, int y);
+// util functions
+void init_matrix(Matrix *mat, int m, int n, double *array2D);
+double *fuzz(int length);
+void print_matrix(Matrix *mat);
+int check_equal(Matrix *mat1, Matrix *mat2);
 
+void matrix_mul_matrix(Matrix *mat1, Matrix *mat2, Matrix *res);
+void trans_matrix(Matrix *mat, Matrix *res);
+
+
+// TODO: should add checks. 
 typedef struct Matrix {
-    int T;
+    // int T, // deleted cuz it leads to complexity of the program.
     int row;
     int col;
-    int *matrix;
+    double *matrix;
 } Matrix;
 
-/*Just swap two elem*/
-void swap(int *a, int *b) {
-    int tmp = *a;
-    *a = *b;
-    *b = tmp;
+int main(void) {
+    // define and init all the matrix used below
+    Matrix a, b, aT, bT, res_ab, res_ab_T, res_bTaT;
+    init_matrix(&a, 12, 24, fuzz(12 * 24));
+    init_matrix(&b, 24, 7, fuzz(24 * 7));
+    init_matrix(&aT, 24, 12, NULL);
+    init_matrix(&bT, 7, 24, NULL);
+    init_matrix(&res_ab, 12, 7, NULL);
+    init_matrix(&res_ab_T, 7, 12, NULL);
+    init_matrix(&res_bTaT, 7, 12, NULL);
+
+    // output the initial matrix a and b
+    printf("matrix A is: \n");
+    print_matrix(&a);
+    printf("\n");
+    printf("matrix B is: \n");
+    print_matrix(&b);
+    printf("\n");
+
+    // get the transpose matrix of A and B for the calc of A^T * B^T
+    trans_matrix(&a, &aT);
+    trans_matrix(&b, &bT);
+
+    // output the matrix A^T and B^T
+    printf("matrix A^T is: \n");
+    print_matrix(&aT);
+    printf("\n");
+    printf("matrix B^T is: \n");
+    print_matrix(&bT);
+    printf("\n");
+
+    // calc A * B
+    matrix_mul_matrix(&a, &b, &res_ab);
+    // get (AB)^T
+    trans_matrix(&res_ab, &res_ab_T);
+    // calc B^T * A^T
+    matrix_mul_matrix(&bT, &aT, &res_bTaT);
+
+    printf("matrix AB is: \n");
+    print_matrix(&res_ab);
+    printf("\n");
+    printf("matrix B^TA^T is: \n");
+    print_matrix(&res_bTaT);
+    printf("\n");
+
+    // output the result matrix (AB)^T & B^TA^T
+    printf("matrix (AB)^T is: \n");
+    print_matrix(&res_ab_T);
+    printf("\n");
+    printf("matrix B^TA^T is: \n");
+    print_matrix(&res_bTaT);
+    printf("\n");
+
+    // check every elem in res_ab_T is equal to res_bTaT, which means res_ab_T =
+    // res_bTaT
+    assert(check_equal(&res_ab_T, &res_bTaT));
 }
 
 /*init Matrix with specific params*/
-void init_matrix(Matrix *mat, int T, int row, int col, int *matrix) {
-    mat->T = T;
-    mat->row = row;
-    mat->col = col;
-    if (matrix == NULL) {
-        mat->matrix = malloc(row * col * sizeof(int));
+void init_matrix(Matrix *mat, int m, int n, double *array2D) {
+    mat->row = m;
+    mat->col = n;
+    if (array2D == NULL) {
+        mat->matrix = malloc(m * n * sizeof(double));
+        for (int i = 0; i < n * m; i++) {
+            mat->matrix[i] = 0;
+        }
     } else {
-        mat->matrix = matrix;
+        mat->matrix = array2D;
     }
 }
 
-/*well, right but has extra cost*/
-int get_index(Matrix *mat, int x, int y) {
-    int col = mat->T ? mat->row : mat->col;
-    return col * x + y;
-}
-
-/*generate `length` int array with random data*/
-int *fuzz(int length) {
-    int *res = malloc(length * sizeof(int));
-    for (int i  =  0;i < length; ++i) {
-        res[i] = rand() % 100;
+/*generate `length` double array with random data*/
+double *fuzz(int l) {
+    double *res = malloc(l * sizeof(double));
+    for (int i = 0; i < l; ++i) {
+        // generate random number from [0, 100)
+        res[i] = (double)(rand() % 100);
     }
     return res;
 }
@@ -59,89 +114,116 @@ res_vec length is row1 * col2 * sizeof(double)
 
 algorithm complexity is O(n^3)
 */
-void matrix_mul_matrix(Matrix *matrix1, Matrix *matrix2, Matrix *res_matrix) {
-    // process the condition when T
-    int m1_row = matrix1->T ? matrix1->col : matrix1->row;
-    int m1_col = matrix1->T ? matrix1->row : matrix1->col;
-    int m2_row = matrix2->T ? matrix2->col : matrix2->row;
-    int m2_col = matrix2->T ? matrix2->row : matrix2->col;
-    // reduce the time to look up matrix pointer
-    int *m1_data = matrix1->matrix, *m2_data = matrix2->matrix;
-    // init the res_matrix
-    res_matrix->T = 0, res_matrix->row = m1_row, res_matrix->col = m2_col;
-    int *res_data;
-    if (res_matrix->matrix == NULL) {
-        res_data = (int *)malloc(m1_row * m2_col * sizeof(int));
-        res_matrix->matrix = res_data;
-    } else {
-        res_data = res_matrix->matrix;
-    }
-    // init res_matrix array
-    for (int i = 0; i < m1_row * m2_col; i++) {
-        res_data[i] = 0;
-    }
-    if (m1_row == m2_row) {
-        for (int i = 0; i < m1_row; i++) {
-            for (int j = 0; j < m2_col; j++) {
-                for (int k = 0; k < m2_row; k++) {
-                    // calc process should be res_vec[1(i)][1(j)] =
-                    // m1[1(i)][1(k)]*m2[1(k)][1(j)]+...+m1[1][n(col1)]*m2[n(row2)][1]
-                    res_data[i * m2_col + j] +=
-                        m1_data[i * m1_col + k] *
-                        m2_data[k * m2_col + j];
+void matrix_mul_matrix(Matrix *mat1, Matrix *mat2, Matrix *res) {
+    int m1_row = mat1->row;
+    int m1_col = mat1->col;
+    int m2_row = mat2->row;
+    int m2_col = mat2->col;
+    if (m1_col == m2_row) { // MD You shouldn't believe what you write!!!
+        // init the res_matrix
+        double *res_data;
+        if (res->matrix == NULL) {
+            init_matrix(res, m1_row, m2_col, NULL);
+        }
+        if (res->row != m1_row || res->col != m2_col) {
+            printf("You wrong! Reinit the matrix.");
+            init_matrix(res, m1_row, m2_col, NULL);
+        }
+        // reduce the time to look up matrix pointer
+        res_data = res->matrix;
+        // init res_matrix array
+        for (int i = 0; i < m1_row * m2_col; i++) {
+            res_data[i] = 0;
+        }
+        double *m1_data = mat1->matrix, *m2_data = mat2->matrix;
+        for (int x = 0; x < m1_row; x++) {
+            for (int y = 0; y < m2_col; y++) {
+                // Solve the result of res_matrix[x][y]
+                for (int k = 0; k < m1_col; k++) { // m2_row == m1_col
+                    res_data[x * m2_col + y] +=
+                        m1_data[x * m1_col + k] * m2_data[k * m2_col + y];
                 }
             }
         }
+    } else {
+        printf("Invalid column and row num, matrix 1 row is %d, col is %d, "
+               "matrix 2 row %d, col is %d\n",
+               m1_row, m1_col, m2_row, m2_col);
     }
 }
 
 /*transpose the matrix, save it to res*/
 void trans_matrix(Matrix *mat, Matrix *res) {
-    if (mat->T) {
-        *res = *mat;
-        res->T = 0;
+    int row = mat->row;
+    int col = mat->col;
+    // defensive programming. you never know what mistake you would make.
+    if (res->matrix == NULL) {
+        // res col and row are opposite
+        init_matrix(res, col, row, NULL);
     } else {
-        res->T = 0;
-        int row = mat->row;
-        int col = mat->col;
+        // 你要相信，你传进来的matrix各项都是配置正确的的。你，要自信！
         res->col = row;
         res->row = col;
-        for (int i = 0; i < mat->row; i++) {
-            for (int j = 0; j < mat->col; j++) {
-                res->matrix[i + j * col] =
-                    mat->matrix[i * col + j];
+    }
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            // row i, col j of `mat` is row j, col i of `res`
+            res->matrix[j * row + i] = mat->matrix[i * col + j];
+        }
+    }
+}
+
+void print_matrix(Matrix *mat) {
+    int m = mat->row, n = mat->col;
+    double *matrix = mat->matrix;
+    for (int i = 0; i < mat->row; i++) {
+        for (int j = 0; j < mat->col; j++) {
+            printf("%.0lf ", matrix[i * n + j]);
+        }
+        printf("\n");
+    }
+}
+
+/*check if the 2 matrix has the same row, col, and every elem in it are equal.*/
+int check_equal(Matrix *mat1, Matrix *mat2) {
+    if (mat1->row != mat2->row) {
+        printf("Matrix 1 and Matrix 2 has different row count. Matrix 1 is %d, "
+               "Matrix 2 is %d\n",
+               mat1->row, mat2->row);
+        return 0;
+    }
+    if (mat1->col != mat2->col) {
+        printf("Matrix 1 and Matrix 2 has different col count. Matrix 1 is %d, "
+               "Matrix 2 is %d\n",
+               mat1->row, mat2->row);
+        return 0;
+    }
+    double *array1 = mat1->matrix;
+    double *array2 = mat2->matrix;
+    int row = mat1->row, col = mat1->col, flag = 1;
+    for (int i = 0; i < mat1->row; i++) {
+        for (int j = 0; j < mat1->col; j++) {
+            if (array1[i * col + j] != array2[i * col + j]) {
+                printf("Matrix 1 and Matrix 2 not equal at row %d, column %d\n",
+                       i, j);
+                flag = 0;
             }
         }
     }
+    return flag;
 }
 
-int main(void) {
-    // define and init all the matrix used below
-    Matrix a, b, aT, bT, res_ab, res_ab_T, res_bTaT;
-    init_matrix(&a, 0, 12, 24, fuzz(12*24));
-    init_matrix(&b, 0, 24, 7, fuzz(24*7));
-    init_matrix(&aT, 0, 24, 12, NULL);
-    init_matrix(&bT, 0, 7, 24, NULL);
-    init_matrix(&res_ab, 0, 24, 7, NULL);
-    init_matrix(&res_ab_T, 0, 7, 24, NULL);
-    init_matrix(&res_bTaT, 0, 7, 24, NULL);
+// Dead Code
+// /*Just swap two elem*/
+// void swap(int *a, int *b) {
+//     int tmp = *a;
+//     *a = *b;
+//     *b = tmp;
+// }
 
-    // get the transpose matrix of A and B for the calc of AT * BT
-    trans_matrix(&a, &aT);
-    trans_matrix(&b, &bT);
-
-    // calc A * B
-    matrix_mul_matrix(&a, &b, &res_ab);
-    // get (AB)T
-    trans_matrix(&res_ab, &res_ab_T);
-    // calc BT * AT
-    matrix_mul_matrix(&bT, &aT, &res_bTaT);
-
-    // check every elem in res_ab_T is equal to res_bTaT, which means res_ab_T = res_bTaT
-    for (int i = 0; i < 12 * 7; i++) {
-        if (res_ab_T.matrix[i] != res_bTaT.matrix[i]) {
-            printf("error at i, %d != %d", res_ab_T.matrix[i],
-                   res_bTaT.matrix[i]);
-        }
-    }
-}
+// Dead Code
+// /*well, right but useless*/
+// int get_index(Matrix *mat, int x, int y) {
+//     int col = mat->T ? mat->row : mat->col;
+//     return col * x + y;
+// }

@@ -29,7 +29,6 @@ int *gedebach(int n) {
                 res[0] = p1;
                 res[1] = p2;
                 res[2] = n - p1 - p2;
-                break;
             }
             p2 = prime[--j];
         }
