@@ -5,7 +5,8 @@ int solution(int n) {
     while (n > 0) {
         // both solutions below are ok without obvious difference in
         // performance. But if use `%` then it is much slower.
-        res += (n + 1) & 1;
+        // res += (n + 1) & 1;
+        res += n ^ 1;
 
         // if (n ^ 1) {res++;}
         n /= 10;
@@ -14,8 +15,11 @@ int solution(int n) {
 }
 
 int main() {
-    int a;
-    scanf("%d", &a);
-    printf("%d", solution(a));
-    return 0;
+    // int a;
+    // scanf("%d", &a);
+    // printf("%d", solution(a));
+    // return 0;
+    for (int i = 1; i < 2147483647; i++) {
+        solution(i);
+    }
 }
