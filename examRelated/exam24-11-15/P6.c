@@ -3,7 +3,7 @@
 int times(int a, int b) {
     // a is depth of the hell, b is jump height.
     int time = a / b;
-    if (a % b == 0) {
+    if (a == time * b) {
         return time;
     } else {
         return time + 1;

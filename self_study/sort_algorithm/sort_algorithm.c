@@ -265,17 +265,25 @@ void quick_sort(int *array, int length) {
     }
     int base = array[0];
     // init two pointers
-    int left = 0;
+    int left = 1;
     int right = length - 1;
     while (left < right) {
         // find two elem, one small in the right part, one big in the left part,
         // then swap them. if left is the start of the right part, it still
         // work. The same when right is the end of the left part.
-        while (array[right] >= base && left < right) {
+        while (array[right] >= base) {
             right--;
         }
-        while (array[left] <= base && left < right) {
+        // I have a good idea. let the condition check placed after the loop,
+        // then it avoids too many condition checks!
+        if (left >= right) {
+            right = left + 1;
+        }
+        while (array[left] <= base) {
             left++;
+        }
+        if (left >= right) {
+            left = right - 1;
         }
         swap(&array[left], &array[right]);
     }

@@ -16,28 +16,22 @@ void sort(int *num, int l) {
     }
     int base = num[0];
     int left = 1, right = l - 1;
-    while (left <= right) {
+    while (left < right) {
         // printf("%d ", left);
-        while (num[left] <= base && left < l) {
+        while (num[left] <= base && left < right) {
             left++;
         }
         // printf("%d ", left);
         // printf("%d ", right);
-        while (num[right] > base && right > 0) {
+        while (num[right] >= base && left < right) {
             right--;
         }
         // printf("%d ", right);
         // printf("\n");
-        // can be optimized
-        if (left < right - 1) {
-            // printf("swap idx %d %d and idx %d %d\n", left, num[left], right, num[right]);
-            swap(&num[left], &num[right]);
-        }
+        swap(&num[left], &num[right]);
     }
-    if (left != 0) {
-        // printf("swap idx %d %d and idx %d %d\n", 0, num[0], right, num[right]);
-        swap(&num[0], &num[right]);
-    }
+    // printf("swap idx %d %d and idx %d %d\n", 0, num[0], right, num[right]);
+    swap(&num[0], &num[right]);
     sort(num, right);
     sort(&num[right+1], l - right - 1);
 }
