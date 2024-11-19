@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 int predicate_ascd(int *array, int length);
 void insertion_sort(int *array, int length);
@@ -16,14 +17,11 @@ void merge(int *array1, int length1, int *array2, int length2, int *res);
 int test_merge();
 void merge_sort(int *array, int length);
 int test_merge_sort();
+void print_array(int *array, int length);
 
-static const int test_array[101] = {
-    100, 91, 8,  2,  7,  80, 40, 36, 67, 24, 63, 9,  20, 38, 21, 95, 93,
-    79,  71, 32, 11, 89, 99, 46, 85, 98, 22, 75, 49, 72, 37, 53, 12, 19,
-    13,  82, 81, 78, 58, 50, 61, 43, 70, 1,  57, 97, 77, 51, 68, 25, 31,
-    3,   47, 74, 18, 23, 45, 66, 83, 4,  27, 6,  55, 59, 88, 62, 73, 30,
-    16,  84, 26, 33, 39, 76, 52, 87, 5,  90, 44, 34, 48, 65, 56, 69, 35,
-    15,  60, 14, 41, 28, 10, 96, 54, 94, 92, 0,  86, 29, 64, 42, 17};
+int test_array[101] = {
+    100,
+};
 
 /*Check if the length of array is ascending.*/
 int predicate_ascd(int *array, int length) {
@@ -254,45 +252,39 @@ Average algorithm complexity is O(nlogn)
 */
 void quick_sort(int *array, int length) {
     // end condition check
-    if (length <= 1) {
+    if (length < 2) {
         return;
     }
     // does worth the condition check?
-    if (length == 2) {
-        if (array[0] > array[1]) {
-            swap(&array[0], &array[1]);
-        }
-    }
+    // if (length == 2) {
+    //     if (array[0] > array[1]) {
+    //         swap(&array[0], &array[1]);
+    //     }
+    // }
     int base = array[0];
     // init two pointers
     int left = 1;
     int right = length - 1;
-    while (left < right) {
+    while (left <= right) {
         // find two elem, one small in the right part, one big in the left part,
         // then swap them. if left is the start of the right part, it still
         // work. The same when right is the end of the left part.
-        while (array[right] >= base) {
+        while (array[right] >= base && left <= right) {
             right--;
         }
-        // I have a good idea. let the condition check placed after the loop,
-        // then it avoids too many condition checks!
-        if (left >= right) {
-            right = left + 1;
-        }
-        while (array[left] <= base) {
+        while (array[left] <= base && left <= right) {
             left++;
         }
-        if (left >= right) {
-            left = right - 1;
+        if (left < right) {
+            swap(&array[left], &array[right]);
         }
-        swap(&array[left], &array[right]);
     }
     swap(&array[0], &array[right]);
     // the base is at array[right] now
     // sort the left part and right part except the base, cause it will make
     // infinite recursion.
-    quick_sort(&array[right + 1], length - right - 1);
     quick_sort(&array[0], right);
+    quick_sort(&array[right + 1], length - right - 1);
 }
 
 /*void quick_sort(int *array, int length) {
@@ -368,10 +360,24 @@ int test_quick_sort() {
     int *array = (int *)malloc(sizeof(int) * test_array[0]);
     memcpy(array, test_array + 1, sizeof(int) * test_array[0]);
     quick_sort(array, test_array[0]);
+    print_array(array, test_array[0]);
     return predicate_ascd(array, test_array[0]);
 }
 
+void print_array(int *array, int length) {
+    for (int i = 0; i < length; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+
 int main() {
+    long timer;
+    time(&timer);
+    srand(timer);
+    for (int i = 1; i <= test_array[0]; i++) {
+        test_array[i] = rand() % 100;
+    }
     char s[64];
     scanf("%s", s);
     if (strcmp(s, "test_insertion_sort") == 0) {

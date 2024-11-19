@@ -5,7 +5,10 @@
 const double DOUBLE_DIFF = 1e-6;
 
 /**Matrix function**/
-void ref_matrix(double *mat, double *res, int m, int n);
+int ref_matrix(double *mat, double *res, int m, int n);
+int rec_ref_matrix(double *mat, double *res, int m, int n);
+int _rec_ref_matrix(double *res, int i, int j, int m, int n, double *temp,
+                    int a);
 void vec_add(double *vec1, double *vec2, double *res, int l);
 void vec_scalar(double *vec, int l, double scalar, double *res);
 void swap_two_row(double *matrix, int row1, int row2, int m, int n);
@@ -73,7 +76,8 @@ void print_matrix(double *a, int m, int n) {
 
 /*convert m*n matrix `mat` to its Row Echelon Form(REF) and write to matrix
  * `res`*/
-void ref_matrix(double *mat, double *res, int m, int n) {
+int ref_matrix(double *mat, double *res, int m, int n) {
+    int a = 1;
     // a variable to save mid result
     double *temp = (double *)malloc(n * sizeof(double));
     // copy it from `mat` to `res`. not modify original matrix. though in fact,
@@ -95,6 +99,7 @@ void ref_matrix(double *mat, double *res, int m, int n) {
             for (int k = j; k < m; k++) {
                 if (fcmp(res[k * n + i], 0) != 0) {
                     swap_two_row(res, j, k, m, n);
+                    a *= -1;
                     flag = 0;
                     break;
                 }
@@ -118,26 +123,27 @@ void ref_matrix(double *mat, double *res, int m, int n) {
     }
 }
 
-void _rec_ref_matrix(double *res, int i, int j, int m, int n,
-                     double *temp) {
+int _rec_ref_matrix(double *res, int i, int j, int m, int n, double *temp,
+                    int a) {
     // set stop condition
     // `i` is the column idx current processing, `j` is the row idx current
     // processing
     if (i >= n || j >= m) {
-        return;
+        return a;
     }
     if (fcmp(res[j * n + i], 0) == 0) {
         int flag = 1;
         for (int k = j; k < m; k++) {
             if (fcmp(res[k * n + i], 0) != 0) {
                 swap_two_row(res, j, k, m, n);
+                a *= -1;
                 flag = 0;
                 break;
             }
         }
         if (flag) {
-            _rec_ref_matrix(res, i + 1, j, m, n, temp);
-            return;
+            _rec_ref_matrix(res, i + 1, j, m, n, temp, a);
+            return a;
         }
     }
     // set the first elem of column 0 of submatrix mat_{i, j} to 0 using
@@ -149,33 +155,34 @@ void _rec_ref_matrix(double *res, int i, int j, int m, int n,
         vec_add(&res[k * n], temp, &res[k * n], n);
         // print_array(&res[k * n], n);
     }
-    _rec_ref_matrix(res, i + 1, j + 1, m, n, temp); // 似乎可以做尾调用优化
+    return _rec_ref_matrix(res, i + 1, j + 1, m, n, temp,
+                           a); // 似乎可以做尾调用优化
 }
 
 /*entrance function for recursion version of ref_matrix()*/
-void rec_ref_matrix(double *mat, double *res, int m, int n) {
+int rec_ref_matrix(double *mat, double *res, int m, int n) {
     double *temp = (double *)malloc(m * n * sizeof(double));
     for (int i = 0; i < m * n; i++) {
         res[i] = mat[i];
     }
-    _rec_ref_matrix(res, 0, 0, m, n, temp);
+    return _rec_ref_matrix(res, 0, 0, m, n, temp, 1);
 }
 
 int main() {
     // add some variable so that the random matrix is not fixed on one machine
-    long timer;
-    time(&timer); // current UNIX timestamp
-    srand(timer);
-    double B[16], REFB[16];
-    for (int i = 0; i < 16; i++) {
-        B[i] = rand() % 4;
-    }
-    // double B[16] = {3, 3, 2, 0, 1, 1, 1, 1, 1, 0, 1, 0, 3, 3, 2, 3};
-    // double REFB[16];
+    // long timer;
+    // time(&timer); // current UNIX timestamp
+    // srand(timer);
+    // double B[16], REFB[16];
+    // for (int i = 0; i < 16; i++) {
+    //     B[i] = rand() % 4;
+    // }
+    double B[16] = {1, 1, 1, 1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1};
+    double REFB[16];
     print_matrix(B, 4, 4);
     printf("\n");
     // two types of function for you to choose
     // ref_matrix(B, REFB, 4, 4);
-    rec_ref_matrix(B, REFB, 4, 4);
+    printf("%d\n", rec_ref_matrix(B, REFB, 4, 4));
     print_matrix(REFB, 4, 4);
 }
