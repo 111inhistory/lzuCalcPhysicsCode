@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
 #define ll long long
@@ -94,7 +93,6 @@ ll linear_filter1(ll *prime, ll n) {
     for (ll i = 0; i < l; i++) {
         filter[i] = BYTE_MASK;
     }
-    memset(filter, ~0, l * sizeof(char));
     filter[0] ^= 1;
     // `idx` & `pos` init refer as 3
     ll idx = 0;
@@ -115,6 +113,8 @@ ll linear_filter1(ll *prime, ll n) {
             ll pos1 = (cur_prime * cur_prime) >> 1;
             ll idx1 = pos1 >> 3;
             pos1 = pos1 & BIT_MASK;
+
+            
             for (; idx1 < l;) {
                 filter[idx1] &= ~((1 << pos1));
                 // init `pos` from `i`. `pos` is the flag pos in filter elem
