@@ -5,7 +5,7 @@
 const double DOUBLE_DIFF = 1e-6;
 
 /**Matrix function**/
-int ref_matrix(double *mat, double *res, int m, int n);
+int row_reduce(double *mat, double *res, int m, int n);
 int rec_ref_matrix(double *mat, double *res, int m, int n);
 int _rec_ref_matrix(double *res, int i, int j, int m, int n, double *temp,
                     int a);
@@ -76,7 +76,7 @@ void print_matrix(double *a, int m, int n) {
 
 /*convert m*n matrix `mat` to its Row Echelon Form(REF) and write to matrix
  * `res`*/
-int ref_matrix(double *mat, double *res, int m, int n) {
+int row_reduce(double *mat, double *res, int m, int n) {
     int a = 1;
     // a variable to save mid result
     double *temp = (double *)malloc(n * sizeof(double));
@@ -121,6 +121,7 @@ int ref_matrix(double *mat, double *res, int m, int n) {
         i++;
         j++;
     }
+    return a;
 }
 
 int _rec_ref_matrix(double *res, int i, int j, int m, int n, double *temp,

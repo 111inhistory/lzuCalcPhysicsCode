@@ -7,6 +7,7 @@ void permute(int n);
 void print_array(int *a, int n);
 void swap(int *a, int *b);
 int next(int *a, int n);
+// void func114514(int *a, int n, int idx);
 int predicate_desc_r2l(int *a, int n);
 
 void swap(int *a, int *b) {
@@ -41,6 +42,7 @@ void permute(int n) {
     free(a);
 }
 
+// 实现，纯粹盯着结果盯出来的，[实际上可以用partial的dfs来实现](存疑)
 // 这里采用dfs的输出的模式，只用swap()
 // `n` 变量不得不加，毕竟总不能用全局变量吧（虽然不是不行）
 // 有点故意给自己加难度之嫌，说实话规律都是盯出来的
