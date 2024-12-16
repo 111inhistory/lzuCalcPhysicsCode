@@ -6,4 +6,4 @@ def gen(a:list[int]):
     else:
         return "{" + ", ".join([gen(a[1:]) for i in range(a[0])]) + "}"
 
-print(gen([2,3,4,5,]))
+print(gen([2,2,2,2,]))
