@@ -31,7 +31,7 @@ void permute(int rank, int *dim, double *src, double *dst, int j, int k) {
     }
     int idx = 0; // point to the pos index
     // a loop to iterate all the dimensions without any rank restriction
-    while (idx >= 0) {
+    while (1) {
         if (idx == rank) { // operation condition (loop to the base)
             swapi(&swapedPos[j], &swapedPos[k]);
             long long srcIdx = computeidx(rank, dim, pos);
@@ -45,6 +45,9 @@ void permute(int rank, int *dim, double *src, double *dst, int j, int k) {
                 pos[idx] = -1;
                 swapedPos[idx] = -1;
                 idx--;
+                if (idx < 0) {
+                    break;
+                }
             } else {
                 pos[idx]++;
                 swapedPos[idx]++;
